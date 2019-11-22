@@ -48,10 +48,6 @@ public class ConvertController extends BaseController{
 
         try {
             TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
-            TbkItemClickExtractRequest req = new TbkItemClickExtractRequest();
-            req.setClickUrl("https://s.click.taobao.com/***");
-            TbkItemClickExtractResponse rsp = client.execute(req);
-            System.out.println(rsp.getBody());
 
             Map<String,Object> mop = new HashMap<>(5);
             mop.put("apikey", "MskSwLnnDS");
