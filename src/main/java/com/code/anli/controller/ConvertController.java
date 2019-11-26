@@ -2,12 +2,14 @@ package com.code.anli.controller;
 
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.fmc.applet.constants.ResponseState;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkTpwdCreateRequest;
 import com.taobao.api.response.TbkTpwdCreateResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -32,13 +34,11 @@ public class ConvertController extends BaseController {
     private static Integer userId = 775420792;
     private static String url = "http://gw.api.taobao.com/router/rest";
     private static String app_key = "28149086";
-    private static String appkey = "MskSwLnnDS";
-    private static Integer adzone_id = 72992585;
-    private static Integer site_id = 21798822;
     private static String secret = "62f18d2ed1337b110a1b761daa79d319";
-    private static String sessionKey = "70000100133174d222fdfcbca97a3869a14590009be1b1c44eeeba18cc0f395edc852c0775420792";
-    private static String session = "700001015456275a28a99d5dda74daa8171d3eb8644093d154515de541d868e0d45e985775420792";
 
+    private static String ztk_appkey = "5354368dd94847c4be62837d3ee3525d";
+    private static String ztk_sid = "23209";
+    private static String ztk_pid = "mm_116453128_21774193_72742171";
 
     @ResponseBody
     @PostMapping("/generalConvert")
@@ -46,94 +46,97 @@ public class ConvertController extends BaseController {
     public Map generalConvert(@RequestBody JSONObject obj) {
 
         try {
-            TaobaoClient client = new DefaultTaobaoClient(url, app_key, secret);
-
+            JSONObject model = new JSONObject();
             String content = obj.getString("content");
             if (null == content) {
                 return success();
             }
 
-            Map<String, Object> model = new HashMap<>(16);
-            model.put("item_id", content);
-            model.put("site_id", site_id);
-            model.put("adzone_id", adzone_id);
-            model.put("session", session);
-            JSONObject resultObject = JSONObject.parseObject(HttpUtil.post("http://gateway.kouss.com/tbpub/", model));
-            System.out.println(resultObject.toJSONString());
+//            content = "$70i3YD9laDr$";
+//            content = "$htm9YD9rEY5$";
+            content = content.trim();
+            String tklPattern = "[^a-zA-Z\\d].+[^a-zA-Z\\d]";
+            String urlPattern = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)";
 
-            TbkTpwdCreateRequest req = new TbkTpwdCreateRequest();
-            req.setText("更多优惠请加群:4854844");
-            JSONObject result = resultObject.getJSONObject("result").getJSONObject("data");
-            String couponClickUrl = result.getString("coupon_click_url");
-            req.setUrl(couponClickUrl);
-            req.setLogo("https://gw.alicdn.com/tfs/TB1KR2agBv0gK0jSZKbXXbK2FXa-800-450.jpg");
-            req.setExt("{}");
-            TbkTpwdCreateResponse rsp = client.execute(req);
-            String body = rsp.getBody();
-            JSONObject object = JSONObject.parseObject(body);
-            JSONObject response = object.getJSONObject("tbk_tpwd_create_response").getJSONObject("data");
-            String scan = response.getString("model");
-            logger.info("生成的口令: " + scan);
+            if (content.matches(tklPattern)) {
+                model = urlAnalys(content);
+            } else if (content.matches(urlPattern)) {
+                model = tklAnalys(content);
+            } else {
+                return fail(ResponseState.ERROR_CONTENT_SYNTAX);
+            }
 
-            resultObject.put("scan", scan);
 
-            return success(resultObject);
-        } catch (ApiException e) {
+            return success(model);
+        } catch (Exception e) {
             e.printStackTrace();
             return fail(com.fmc.applet.constants.ResponseState.INTELLIGENT_DOOR_ERRPR);
         }
 
     }
 
-
     /**
-     * 根据宝贝URL截取宝贝ID
-     * http://auction1.taobao.com/auction/item_detail-0db1-d57b90f4c406fe1ee1517884dafe338b.jhtml
-     * 截取后为32位的字符串：d57b90f4c406fe1ee1517884dafe338b
-     * http://item.taobao.com/auction/item_detail.htm?itemID=1b70b4c3fb32cf0e24af9a649ad5360d
-     * 截取后为32位的字符串：1b70b4c3fb32cf0e24af9a649ad5360d
-     * 如下几种宝贝URL均合法：
-     * http://item.taobao.com/auction/item_detail-0db2-a159acabbeedeb61ea92231371adae67.jhtml
-     * http://auction1.taobao.com/auction/item_detail-0db1-6ce724f828e554364f6bb8cd4fdf0249.jhtml
-     * http://item.taobao.com/auction/item_detail.htm?itemID=1b70b4c3fb32cf0e24af9a649ad5360d&ali_refid=a3_419095_1006:380074963:6:%B7%DB:504f81b2bd89eb72144729a403c22c10
-     * http://item.taobao.com/auction/item_detail.jhtml?item_id=f19580fd3d5ec2395ff6e7d4192b9230&x_id=0db1
-     * http://item.taobao.com/auction/item_detail--2c8338b253d3beaa41afb51f610e2eb5.jhtml
+     * 淘链接解析(折淘客)
      *
-     * @param auctionUrl
+     * @param
      * @return
      */
+    private JSONObject urlAnalys(String content) throws ApiException {
 
-    @Test
-    public void parseUrl() {
-        String auctionUrl = "https://detail.tmall.com/item.htm?id=574397159757&ali_trackid=2:mm_128214214_40172838_152876257:1574524787_126_684367570&spm=a2e2e.10720394/nn.90200100.1&pvid=23399863&ak=23399863";
-        String ret = "";
-//        TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
-        try {
-            String regex1 = "http://(item|auction1)\\.taobao\\.com/auction/item_detail-(\\w{4}|\\w{3})-(\\w{32})\\.jhtml.*";
-            String regex2 = "http://(item|auction1)\\.taobao\\.com/auction/item_detail\\.(htm|jhtml)\\?(itemID|item_id)=(\\w{32}).*";
-            String regex3 = "http://item.taobao.com/auction/item_detail--(\\w{32}).jhtml";
-            Pattern pattern1 = Pattern.compile(regex1, Pattern.CASE_INSENSITIVE);
-            Matcher matcher1 = pattern1.matcher(auctionUrl);
+        Map<String, Object> param = new HashMap<>(5);
+        param.put("appkey", ztk_appkey);
+        param.put("sid", ztk_sid);
+        param.put("pid", ztk_pid);
+        param.put("tkl", content);
+        String post = HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian_tkl.ashx", param);
+        String url = HttpUtil.get(JSONObject.parseObject(post).getString("url"));
+        JSONObject model = JSONObject.parseObject(url).getJSONObject("tbk_privilege_get_response").getJSONObject("result").getJSONObject("data");
+        model = parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
+        return model;
+    }
 
-            Pattern pattern2 = Pattern.compile(regex2, Pattern.CASE_INSENSITIVE);
-            Matcher matcher2 = pattern2.matcher(auctionUrl);
+    /**
+     * 淘口令解析(折淘客)
+     *
+     * @param
+     * @return
+     */
+    private JSONObject tklAnalys(String content) throws ApiException {
 
-            Pattern pattern3 = Pattern.compile(regex3, Pattern.CASE_INSENSITIVE);
-            Matcher matcher3 = pattern3.matcher(auctionUrl);
+        Map<String, Object> param = new HashMap<>(5);
+        param.put("appkey", ztk_appkey);
+        param.put("sid", ztk_sid);
+        param.put("pid", ztk_pid);
+        param.put("tkl", content);
+        String post = HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian_tkl.ashx", param);
+        String url = HttpUtil.get(JSONObject.parseObject(post).getString("url"));
+        JSONObject model = JSONObject.parseObject(url).getJSONObject("tbk_privilege_get_response").getJSONObject("result").getJSONObject("data");
+        model = parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
+        return model;
+    }
 
-            if (matcher1.matches()) {
-                ret = matcher1.group(3);
-                System.out.println(ret);
-            } else if (matcher2.matches()) {
-                ret = matcher2.group(4);
-                System.out.println(ret);
-            } else if (matcher3.matches()) {
-                ret = matcher3.group(1);
-                System.out.println(ret);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(ret);
+
+    /**
+     * 淘口令生成(官方sdk)
+     *
+     * @param
+     * @return
+     */
+    private JSONObject parseTkl(String couponClickUrl, String clickUrl, JSONObject model) throws ApiException {
+        TaobaoClient client = new DefaultTaobaoClient(url, app_key, secret);
+
+        TbkTpwdCreateRequest req = new TbkTpwdCreateRequest();
+        req.setText("更多优惠请加群:4854844");
+        req.setUrl(StringUtils.isEmpty(couponClickUrl) ? clickUrl : couponClickUrl);
+        req.setLogo("https://gw.alicdn.com/tfs/TB1KR2agBv0gK0jSZKbXXbK2FXa-800-450.jpg");
+        req.setExt("{}");
+        TbkTpwdCreateResponse rsp = client.execute(req);
+        String body = rsp.getBody();
+        JSONObject resultObj = JSONObject.parseObject(body);
+        JSONObject resu = resultObj.getJSONObject("tbk_tpwd_create_response").getJSONObject("data");
+        String scan = resu.getString("model");
+        logger.info("生成的口令: " + scan);
+        model.put("scan", scan);
+        return model;
     }
 }

@@ -15,6 +15,7 @@ public enum ResponseState {
     ERROR_NETWORK_INFO("网络繁忙，请稍后",9502),
     ERROR_TOKEN_EXPIRED("登录失效",100),
     ERROR_SQL_SYNTAX("sql语法错误",110),
+    ERROR_CONTENT_SYNTAX("请输入正确的链接或者淘口令",210),
 
 
     //注册、登录、个人设置
