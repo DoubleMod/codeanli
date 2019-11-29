@@ -8,15 +8,12 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkTpwdCreateRequest;
 import com.taobao.api.response.TbkTpwdCreateResponse;
-import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @Classhttp://gateway.kouss.com/tbpub/privilegeGetName ConvertController
@@ -55,12 +52,12 @@ public class ConvertController extends BaseController {
 //            content = "$70i3YD9laDr$";
 //            content = "$htm9YD9rEY5$";
             content = content.trim();
-            String tklPattern = "[^a-zA-Z\\d].+[^a-zA-Z\\d]";
+            String tklPattern = "[^\\u4e00-\\u9fa5]\\w{11}[^\\u4e00-\\u9fa5]|";
             String urlPattern = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)";
 
-            if (content.matches(tklPattern)) {
+            if (content.contains(".com")||content.contains(".cn")||content.contains(".net")) {
                 model = urlAnalys(content);
-            } else if (content.matches(urlPattern)) {
+            } else if (content.matches(tklPattern)) {
                 model = tklAnalys(content);
             } else {
                 return fail(ResponseState.ERROR_CONTENT_SYNTAX);
@@ -70,7 +67,7 @@ public class ConvertController extends BaseController {
             return success(model);
         } catch (Exception e) {
             e.printStackTrace();
-            return fail(com.fmc.applet.constants.ResponseState.INTELLIGENT_DOOR_ERRPR);
+            return fail(ResponseState.INTELLIGENT_DOOR_ERRPR);
         }
 
     }
@@ -86,11 +83,17 @@ public class ConvertController extends BaseController {
         Map<String, Object> param = new HashMap<>(5);
         param.put("appkey", ztk_appkey);
         param.put("sid", ztk_sid);
+        param.put("type", 0);
+        param.put("content", content);
+        String post = HttpUtil.post("https://api.zhetaoke.com:10001/api/open_shangpin_id.ashx", param);
+        String itemId = JSONObject.parseObject(post).getString("item_id");
         param.put("pid", ztk_pid);
-        param.put("tkl", content);
-        String post = HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian_tkl.ashx", param);
-        String url = HttpUtil.get(JSONObject.parseObject(post).getString("url"));
-        JSONObject model = JSONObject.parseObject(url).getJSONObject("tbk_privilege_get_response").getJSONObject("result").getJSONObject("data");
+        param.put("num_iid", itemId);
+        param.put("signurl", 0);
+        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx", param));
+        JSONObject tbk_privilege_get_response = jsonObject.getJSONObject("tbk_privilege_get_response");
+        JSONObject result = tbk_privilege_get_response.getJSONObject("result");
+        JSONObject model = result.getJSONObject("data");
         model = parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
         return model;
     }
