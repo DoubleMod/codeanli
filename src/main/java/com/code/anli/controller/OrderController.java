@@ -4,12 +4,15 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.code.anli.mq.DirectSender;
+import com.code.anli.service.ITOrderService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * @Classhttp://gateway.kouss.com/tbpub/privilegeGetName QueryOrderController
@@ -20,18 +23,22 @@ import java.util.logging.Logger;
  **/
 
 @RestController
-@RequestMapping("/Query")
-public class QueryOrderController extends BaseController {
-    private Logger logger = Logger.getLogger(QueryOrderController.class.getName());
+@RequestMapping("/order")
+public class OrderController extends BaseController {
+    private Logger logger = Logger.getLogger(OrderController.class.getName());
 
     private static String ztk_appkey = "5354368dd94847c4be62837d3ee3525d";
     private static String ztk_sid = "23209";
     private static String ztk_pid = "mm_116453128_21774193_72742171";
 
+    @Autowired
+    private DirectSender directSender;
+
+
     @CrossOrigin
     @ResponseBody
     @PostMapping("/queryOrder")
-    public Map generalConvert(@RequestBody JSONObject obj) {
+    public Map queryOrder(@RequestBody JSONObject obj) {
 
         try {
 
@@ -51,12 +58,22 @@ public class QueryOrderController extends BaseController {
             JSONObject object = jsonObject.getJSONObject("tbk_sc_order_details_get_response");
             JSONObject data = object.getJSONObject("data");
             JSONObject results = data.getJSONObject("results");
-            JSONArray model = results.getJSONArray("publisher_order_dto");
-            return success(model);
+            JSONArray result = results.getJSONArray("publisher_order_dto");
+
+            if (result != null) {
+                JSONObject model = new JSONObject();
+                model.put("orders", result);
+                directSender.sendDirect(model);
+            }
+
+
+            return success(result);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getCause().getMessage());
             return fail(com.fmc.applet.constants.ResponseState.INTELLIGENT_DOOR_ERRPR);
         }
+
 
     }
 }

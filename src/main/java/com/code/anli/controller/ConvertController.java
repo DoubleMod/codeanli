@@ -43,7 +43,7 @@ public class ConvertController extends BaseController {
     public Map generalConvert(@RequestBody JSONObject obj) {
 
         try {
-            JSONObject model = new JSONObject();
+            JSONObject model ;
             String content = obj.getString("content");
             if (null == content) {
                 return success();
@@ -51,7 +51,7 @@ public class ConvertController extends BaseController {
 
 //            content = "$70i3YD9laDr$";
 //            content = "$htm9YD9rEY5$";
-            content = content.trim();
+            content = content.trim().replaceAll("(\\r\\n|\\n|\\n\\r)","").replaceAll(" ", "");
             String tklPattern = "[^\\u4e00-\\u9fa5]\\w{11}[^\\u4e00-\\u9fa5]|";
             String urlPattern = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)";
 
