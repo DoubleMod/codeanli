@@ -56,7 +56,7 @@ public class MpGenerator {
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         strategy.setInclude(new String[] { "t_order" }); // 需要生成的表
 
-        // strategy.setExclude(new String[]{"test"}); // 排除生成的表
+        // strategy.setExclude(new String[]{"practice"}); // 排除生成的表
         // 字段名生成策略
         strategy.setFieldNaming(NamingStrategy.underline_to_camel);
         // 自定义实体父类

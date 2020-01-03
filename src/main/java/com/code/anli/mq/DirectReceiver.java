@@ -47,7 +47,7 @@ public class DirectReceiver {
 
     //    0 * * * * *
 //    0 0 * * * ?
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 30 * * * ?")
     public void shcsd() {
         JSONObject object = new JSONObject();
         object.put("json", new JSONObject());
@@ -80,7 +80,7 @@ public class DirectReceiver {
         if (null != orders) {
             for (TOrder order : orders) {
                 String tradeParentId = order.getTradeParentId();
-                int count = orderService.selectCount(new EntityWrapper<TOrder>().where("trade_parent_id={0}", tradeParentId));
+                int count = orderService.selectCount(new EntityWrapper<TOrder>().where("trade_parent_id={0}", tradeParentId).and("trade_id={0}",order.getTradeId()));
                 if (count == 0) {
                     orderService.insert(order);
                     logger.info("成功插入1条,trade:" + order.getTradeParentId());
