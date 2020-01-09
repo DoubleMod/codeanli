@@ -25,10 +25,9 @@ public class RabbitMQFanoutConfig {
     }
 
     /**
-     * Fanout模式 Fanout 就是我们熟悉的广播模式或者订阅模式，
-     * 给Fanout交换机发送消息，绑定了这个交换机的所有队列都收到这个消息。
+     * Fanout模式 Fanout 就是我们熟悉的广播模式或者订阅模式， 给Fanout交换机发送消息，绑定了这个交换机的所有队列都收到这个消息。
      *
-     * @return
+     * @return 返回数据
      */
     @Bean
     public FanoutExchange fanoutExchange() {

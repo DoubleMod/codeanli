@@ -1,7 +1,5 @@
 package com.code.anli.config;
 
-
-
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -15,14 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by masin on 2017/6/28.
- * mybaties-plus 代码生成插件
+ * Created by masin on 2017/6/28. mybaties-plus 代码生成插件
  */
 public class MpGenerator {
     /**
-     * <p>
      * MySQL 生成演示
-     * </p>
      */
     public static void main(String[] args) {
         AutoGenerator mpg = new AutoGenerator();
@@ -31,9 +26,9 @@ public class MpGenerator {
         gc.setOutputDir("E:\\repository\\codeanli\\src\\main\\java\\com\\code\\anli");
         gc.setFileOverride(true);
         gc.setActiveRecord(true);
-        gc.setEnableCache(false);// XML 二级缓存
-        gc.setBaseResultMap(true);// XML ResultMap
-        gc.setBaseColumnList(false);// XML columList
+        gc.setEnableCache(false); // XML 二级缓存
+        gc.setBaseResultMap(true); // XML ResultMap
+        gc.setBaseColumnList(false); // XML columList
         gc.setAuthor("masin");
         // 自定义文件命名，注意 %s 会自动填充表实体属性！
         // gc.setMapperName("%sDao");
@@ -52,9 +47,9 @@ public class MpGenerator {
         mpg.setDataSource(dsc);
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        //strategy.setTablePrefix("beautiful_");// 此处可以修改为您的表前缀
-        strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
-        strategy.setInclude(new String[] { "t_order" }); // 需要生成的表
+        // strategy.setTablePrefix("beautiful_");// 此处可以修改为您的表前缀
+        strategy.setNaming(NamingStrategy.underline_to_camel); // 表名生成策略
+        strategy.setInclude(new String[]{"t_order"}); // 需要生成的表
 
         // strategy.setExclude(new String[]{"practice"}); // 排除生成的表
         // 字段名生成策略
@@ -85,14 +80,15 @@ public class MpGenerator {
         pc.setModuleName("anli");
         mpg.setPackageInfo(pc);
         // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
-        InjectionConfig cfg = new InjectionConfig() {
-            @Override
-            public void initMap() {
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
-                this.setMap(map);
-            }
-        };
+        InjectionConfig cfg =
+                new InjectionConfig() {
+                    @Override
+                    public void initMap() {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+                        this.setMap(map);
+                    }
+                };
         mpg.setCfg(cfg);
         // 自定义模板配置，可以 copy 源码 mybatis-plus/src/main/resources/template 下面内容修改，
         // 放置自己项目的 src/main/resources/template 目录下, 默认名称一下可以不配置，也可以自定义模板名称

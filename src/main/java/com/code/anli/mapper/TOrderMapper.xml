@@ -2,55 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.code.anli.mapper.TOrderMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.code.anli.entity.TOrder">
-		<id column="id" property="id" />
-		<result column="adzone_id" property="adzoneId" />
-		<result column="adzone_name" property="adzoneName" />
-		<result column="alimama_rate" property="alimamaRate" />
-		<result column="alimama_share_fee" property="alimamaShareFee" />
-		<result column="alipay_total_price" property="alipayTotalPrice" />
-		<result column="app_key" property="appKey" />
-		<result column="click_time" property="clickTime" />
-		<result column="deposit_price" property="depositPrice" />
-		<result column="flow_source" property="flowSource" />
-		<result column="income_rate" property="incomeRate" />
-		<result column="item_category_name" property="itemCategoryName" />
-		<result column="item_id" property="itemId" />
-		<result column="item_img" property="itemImg" />
-		<result column="item_link" property="itemLink" />
-		<result column="item_num" property="itemNum" />
-		<result column="item_price" property="itemPrice" />
-		<result column="item_title" property="itemTitle" />
-		<result column="order_type" property="orderType" />
-		<result column="pub_id" property="pubId" />
-		<result column="pub_share_fee" property="pubShareFee" />
-		<result column="pub_share_pre_fee" property="pubSharePreFee" />
-		<result column="pub_share_rate" property="pubShareRate" />
-		<result column="refund_tag" property="refundTag" />
-		<result column="seller_nick" property="sellerNick" />
-		<result column="seller_shop_title" property="sellerShopTitle" />
-		<result column="site_id" property="siteId" />
-		<result column="site_name" property="siteName" />
-		<result column="subsidy_fee" property="subsidyFee" />
-		<result column="subsidy_rate" property="subsidyRate" />
-		<result column="subsidy_type" property="subsidyType" />
-		<result column="tb_deposit_time" property="tbDepositTime" />
-		<result column="tb_paid_time" property="tbPaidTime" />
-		<result column="terminal_type" property="terminalType" />
-		<result column="tk_commission_fee_for_media_platform" property="tkCommissionFeeForMediaPlatform" />
-		<result column="tk_commission_pre_fee_for_media_platform" property="tkCommissionPreFeeForMediaPlatform" />
-		<result column="tk_commission_rate_for_media_platform" property="tkCommissionRateForMediaPlatform" />
-		<result column="tk_create_time" property="tkCreateTime" />
-		<result column="tk_deposit_time" property="tkDepositTime" />
-		<result column="tk_order_role" property="tkOrderRole" />
-		<result column="tk_paid_time" property="tkPaidTime" />
-		<result column="tk_status" property="tkStatus" />
-		<result column="tk_total_rate" property="tkTotalRate" />
-		<result column="total_commission_fee" property="totalCommissionFee" />
-		<result column="total_commission_rate" property="totalCommissionRate" />
-		<result column="trade_id" property="tradeId" />
-		<result column="trade_parent_id" property="tradeParentId" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.code.anli.entity.TOrder">
+        <id column="id" property="id"/>
+        <result column="adzone_id" property="adzoneId"/>
+        <result column="adzone_name" property="adzoneName"/>
+        <result column="alimama_rate" property="alimamaRate"/>
+        <result column="alimama_share_fee" property="alimamaShareFee"/>
+        <result column="alipay_total_price" property="alipayTotalPrice"/>
+        <result column="app_key" property="appKey"/>
+        <result column="click_time" property="clickTime"/>
+        <result column="deposit_price" property="depositPrice"/>
+        <result column="flow_source" property="flowSource"/>
+        <result column="income_rate" property="incomeRate"/>
+        <result column="item_category_name" property="itemCategoryName"/>
+        <result column="item_id" property="itemId"/>
+        <result column="item_img" property="itemImg"/>
+        <result column="item_link" property="itemLink"/>
+        <result column="item_num" property="itemNum"/>
+        <result column="item_price" property="itemPrice"/>
+        <result column="item_title" property="itemTitle"/>
+        <result column="order_type" property="orderType"/>
+        <result column="pub_id" property="pubId"/>
+        <result column="pub_share_fee" property="pubShareFee"/>
+        <result column="pub_share_pre_fee" property="pubSharePreFee"/>
+        <result column="pub_share_rate" property="pubShareRate"/>
+        <result column="refund_tag" property="refundTag"/>
+        <result column="seller_nick" property="sellerNick"/>
+        <result column="seller_shop_title" property="sellerShopTitle"/>
+        <result column="site_id" property="siteId"/>
+        <result column="site_name" property="siteName"/>
+        <result column="subsidy_fee" property="subsidyFee"/>
+        <result column="subsidy_rate" property="subsidyRate"/>
+        <result column="subsidy_type" property="subsidyType"/>
+        <result column="tb_deposit_time" property="tbDepositTime"/>
+        <result column="tb_paid_time" property="tbPaidTime"/>
+        <result column="terminal_type" property="terminalType"/>
+        <result column="tk_commission_fee_for_media_platform" property="tkCommissionFeeForMediaPlatform"/>
+        <result column="tk_commission_pre_fee_for_media_platform" property="tkCommissionPreFeeForMediaPlatform"/>
+        <result column="tk_commission_rate_for_media_platform" property="tkCommissionRateForMediaPlatform"/>
+        <result column="tk_create_time" property="tkCreateTime"/>
+        <result column="tk_deposit_time" property="tkDepositTime"/>
+        <result column="tk_order_role" property="tkOrderRole"/>
+        <result column="tk_paid_time" property="tkPaidTime"/>
+        <result column="tk_status" property="tkStatus"/>
+        <result column="tk_total_rate" property="tkTotalRate"/>
+        <result column="total_commission_fee" property="totalCommissionFee"/>
+        <result column="total_commission_rate" property="totalCommissionRate"/>
+        <result column="trade_id" property="tradeId"/>
+        <result column="trade_parent_id" property="tradeParentId"/>
+    </resultMap>
 
 </mapper>

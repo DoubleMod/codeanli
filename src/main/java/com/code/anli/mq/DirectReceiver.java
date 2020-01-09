@@ -39,14 +39,15 @@ public class DirectReceiver {
     // queues是指要监听的队列的名字
     @RabbitListener(queues = RabbitMQDirectConfig.DIRECT_QUEUE)
     public void receiverDirect(JSONObject obj) {
-        DirectParamModel directParamModel = JSONObject.parseObject(obj.toJSONString(), DirectParamModel.class);
+        DirectParamModel directParamModel =
+                JSONObject.parseObject(obj.toJSONString(), DirectParamModel.class);
         List<TOrder> orders = directParamModel.getOrders();
         orderProcess(orders);
-//        logger.info("处理完毕");
+        //        logger.info("处理完毕");
     }
 
     //    0 * * * * *
-//    0 0 * * * ?
+    //    0 0 * * * ?
     @Scheduled(cron = "0 30 * * * ?")
     public void shcsd() {
         JSONObject object = new JSONObject();
@@ -72,15 +73,17 @@ public class DirectReceiver {
                 logger.info("定时任务执行shi失败");
             }
         }
-
     }
-
 
     private void orderProcess(List<TOrder> orders) {
         if (null != orders) {
             for (TOrder order : orders) {
                 String tradeParentId = order.getTradeParentId();
-                int count = orderService.selectCount(new EntityWrapper<TOrder>().where("trade_parent_id={0}", tradeParentId).and("trade_id={0}",order.getTradeId()));
+                int count =
+                        orderService.selectCount(
+                                new EntityWrapper<TOrder>()
+                                        .where("trade_parent_id={0}", tradeParentId)
+                                        .and("trade_id={0}", order.getTradeId()));
                 if (count == 0) {
                     orderService.insert(order);
                     logger.info("成功插入1条,trade:" + order.getTradeParentId());
@@ -88,6 +91,4 @@ public class DirectReceiver {
             }
         }
     }
-
-
 }

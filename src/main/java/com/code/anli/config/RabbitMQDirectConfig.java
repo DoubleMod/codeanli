@@ -17,7 +17,7 @@ public class RabbitMQDirectConfig {
     /**
      * Direct模式
      *
-     * @return
+     * @return 返回数据
      */
     @Bean
     public Queue directQueue() {

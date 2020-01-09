@@ -16,46 +16,41 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * @Classhttp://gateway.kouss.com/tbpub/privilegeGetName ConvertController
- * @Description TODO
- * @Author Administrator
- * @Date 2019/11/22 13:38
- * @Version 1.0
- **/
-
+ * @Classhttp://gateway.kouss.com/tbpub/privilegeGetName ConvertController @Description
+ * Administrator @Date 2019/11/22 13:38 @Version 1.0
+ */
 @RestController
 @RequestMapping("/Convert")
 public class ConvertController extends BaseController {
-    private Logger logger = Logger.getLogger(ConvertController.class.getName());
-
     private static Integer userId = 775420792;
     private static String url = "http://gw.api.taobao.com/router/rest";
     private static String app_key = "28149086";
     private static String secret = "62f18d2ed1337b110a1b761daa79d319";
-
     private static String ztk_appkey = "5354368dd94847c4be62837d3ee3525d";
     private static String ztk_sid = "23209";
     private static String ztk_pid = "mm_116453128_21774193_72742171";
+    private Logger logger = Logger.getLogger(ConvertController.class.getName());
 
     @ResponseBody
     @PostMapping("/generalConvert")
     @CrossOrigin
-    public Map generalConvert(@RequestBody JSONObject obj) {
+    public Map<String, Object> generalConvert(@RequestBody JSONObject obj) {
 
         try {
-            JSONObject model ;
+            JSONObject model;
             String content = obj.getString("content");
             if (null == content) {
                 return success();
             }
 
-//            content = "$70i3YD9laDr$";
-//            content = "$htm9YD9rEY5$";
-            content = content.trim().replaceAll("(\\r\\n|\\n|\\n\\r)","").replaceAll(" ", "");
+            //            content = "$70i3YD9laDr$";
+            //            content = "$htm9YD9rEY5$";
+            content = content.trim().replaceAll("(\\r\\n|\\n|\\n\\r)", "").replaceAll(" ", "");
             String tklPattern = "[^\\u4e00-\\u9fa5]\\w{11}[^\\u4e00-\\u9fa5]|";
-            String urlPattern = "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)";
+            String urlPattern =
+                    "((http[s]{0,1}|ftp)://[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\\\.\\\\-]+\\\\.([a-zA-Z0-9]{2,4})(:\\\\d+)?(/[a-zA-Z0-9\\\\.\\\\-~!@#$%^&*+?:_/=<>]*)?)";
 
-            if (content.contains(".com")||content.contains(".cn")||content.contains(".net")) {
+            if (content.contains(".com") || content.contains(".cn") || content.contains(".net")) {
                 model = urlAnalys(content);
             } else if (content.matches(tklPattern)) {
                 model = tklAnalys(content);
@@ -63,20 +58,18 @@ public class ConvertController extends BaseController {
                 return fail(ResponseState.ERROR_CONTENT_SYNTAX);
             }
 
-
             return success(model);
         } catch (Exception e) {
             e.printStackTrace();
             return fail(ResponseState.INTELLIGENT_DOOR_ERRPR);
         }
-
     }
 
     /**
-     * 淘链接解析(折淘客)
-     *
-     * @param
-     * @return
+     * @param content 请求参数
+     * @return 返回数据
+     * @throws ApiException 异常
+     * @Description 淘链接解析(折淘客)
      */
     private JSONObject urlAnalys(String content) throws ApiException {
 
@@ -90,19 +83,20 @@ public class ConvertController extends BaseController {
         param.put("pid", ztk_pid);
         param.put("num_iid", itemId);
         param.put("signurl", 0);
-        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx", param));
-        JSONObject tbk_privilege_get_response = jsonObject.getJSONObject("tbk_privilege_get_response");
-        JSONObject result = tbk_privilege_get_response.getJSONObject("result");
+        JSONObject jsonObject =
+                JSONObject.parseObject(
+                        HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx", param));
+        JSONObject tbkPrivilegeGetResponse = jsonObject.getJSONObject("tbk_privilege_get_response");
+        JSONObject result = tbkPrivilegeGetResponse.getJSONObject("result");
         JSONObject model = result.getJSONObject("data");
-        model = parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
-        return model;
+        return parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
     }
 
     /**
-     * 淘口令解析(折淘客)
-     *
-     * @param
-     * @return
+     * @param content 请求参数
+     * @return 返回数据
+     * @throws ApiException 异常
+     * @Description 淘口令解析(折淘客)
      */
     private JSONObject tklAnalys(String content) throws ApiException {
 
@@ -111,21 +105,27 @@ public class ConvertController extends BaseController {
         param.put("sid", ztk_sid);
         param.put("pid", ztk_pid);
         param.put("tkl", content);
-        String post = HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian_tkl.ashx", param);
+        String post =
+                HttpUtil.post("https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian_tkl.ashx", param);
         String url = HttpUtil.get(JSONObject.parseObject(post).getString("url"));
-        JSONObject model = JSONObject.parseObject(url).getJSONObject("tbk_privilege_get_response").getJSONObject("result").getJSONObject("data");
-        model = parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
-        return model;
+        JSONObject model =
+                JSONObject.parseObject(url)
+                        .getJSONObject("tbk_privilege_get_response")
+                        .getJSONObject("result")
+                        .getJSONObject("data");
+        return parseTkl(model.getString("coupon_click_url"), model.getString("item_url"), model);
     }
 
-
     /**
-     * 淘口令生成(官方sdk)
-     *
-     * @param
-     * @return
+     * @param couponClickUrl 券跳转地址
+     * @param clickUrl       点击跳转地址
+     * @param model          参数
+     * @return 返回数据
+     * @throws ApiException 异常
+     * @Description 淘口令生成(官方sdk)
      */
-    private JSONObject parseTkl(String couponClickUrl, String clickUrl, JSONObject model) throws ApiException {
+    private JSONObject parseTkl(String couponClickUrl, String clickUrl, JSONObject model)
+            throws ApiException {
         TaobaoClient client = new DefaultTaobaoClient(url, app_key, secret);
 
         TbkTpwdCreateRequest req = new TbkTpwdCreateRequest();

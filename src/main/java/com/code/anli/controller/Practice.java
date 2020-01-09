@@ -1,19 +1,15 @@
 package com.code.anli.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @ClassName practice
- * @Description TODO
- * @Author Administrator
- * @Date 2019/12/24 17:18
- * @Version 1.0
- **/
+ * @ClassName practice @Description
+ */
 public class Practice {
 
     public static List<Emp> list = new ArrayList<>();
@@ -27,17 +23,13 @@ public class Practice {
         list.add(new Emp("贵阳", "小白", 22));
     }
 
-
     @Test
     public void hot() {
-        Map<String, Integer> collect = list.stream().collect(Collectors.toMap(Emp::getName, Emp::getAge));
-        collect.forEach((s, integer) -> System.out.println(s+integer));
-
-
+        Map<String, Integer> collect =
+                list.stream().collect(Collectors.toMap(Emp::getName, Emp::getAge));
+        collect.forEach((s, integer) -> System.out.println(s + integer));
     }
-
 }
-
 
 class Emp {
     private String city;
@@ -74,4 +66,3 @@ class Emp {
         this.age = age;
     }
 }
-

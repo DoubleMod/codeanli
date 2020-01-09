@@ -66,7 +66,7 @@ public class Const {
     /*
      * 图片地址
      */
-//    public static final String url = "http://120.92.136.44:8099/fileUpload/upload/showimage/";
+    //    public static final String url = "http://120.92.136.44:8099/fileUpload/upload/showimage/";
     /*
      * 微信支付类型
      */
@@ -400,5 +400,5 @@ public class Const {
     /**
      * U里测试订单号标识符
      */
-    public static final String ULITEST="ulitest";
+    public static final String ULITEST = "ulitest";
 }

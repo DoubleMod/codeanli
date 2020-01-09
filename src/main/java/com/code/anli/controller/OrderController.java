@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.code.anli.entity.TOrder;
 import com.code.anli.mq.DirectSender;
 import com.code.anli.service.ITOrderService;
-import com.fmc.applet.constants.ResponseState;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,32 +18,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Classhttp://gateway.kouss.com/tbpub/privilegeGetName QueryOrderController
- * @Description TODO
- * @Author Administrator
- * @Date 2019/11/27 22:38
- * @Version 1.0
- **/
-
+ * @ClassName QueryOrderController @Description
+ * 22:38 @Version 1.0
+ */
 @RestController
 @RequestMapping("/order")
 public class OrderController extends BaseController {
-    private Logger logger = Logger.getLogger(OrderController.class.getName());
-
     private static String ztk_appkey = "5354368dd94847c4be62837d3ee3525d";
     private static String ztk_sid = "23209";
     private static String ztk_pid = "mm_116453128_21774193_72742171";
-
+    private Logger logger = Logger.getLogger(OrderController.class.getName());
     @Autowired
     private DirectSender directSender;
     @Autowired
     private ITOrderService orderService;
 
-
     @CrossOrigin
     @ResponseBody
     @PostMapping("/queryOrder")
-    public Map queryOrder(@RequestBody JSONObject obj) {
+    public Map<String, Object> queryOrder(@RequestBody JSONObject obj) {
         Date nowDate = new Date();
         Map<String, Object> parm = new HashMap<>();
         parm.put("appkey", ztk_appkey);
@@ -53,9 +45,16 @@ public class OrderController extends BaseController {
         try {
             JSONArray result;
             String dateString = DateUtil.formatDateTime(DateUtil.offsetHour(nowDate, -3));
-            parm.put("start_time", null == obj.getString("start_time") ? dateString : obj.getString("start_time"));
-            parm.put("end_time", null == obj.getString("end_time") ? DateUtil.formatDateTime(nowDate) : obj.getString("end_time"));
-            String resultString = HttpUtil.post("https://api.zhetaoke.com:10001/api/open_dingdanchaxun2.ashx", parm);
+            parm.put(
+                    "start_time",
+                    null == obj.getString("start_time") ? dateString : obj.getString("start_time"));
+            parm.put(
+                    "end_time",
+                    null == obj.getString("end_time")
+                            ? DateUtil.formatDateTime(nowDate)
+                            : obj.getString("end_time"));
+            String resultString =
+                    HttpUtil.post("https://api.zhetaoke.com:10001/api/open_dingdanchaxun2.ashx", parm);
             JSONObject resultObject = JSONObject.parseObject(resultString);
             String url = resultObject.getString("url");
             System.out.println(url);
@@ -80,14 +79,11 @@ public class OrderController extends BaseController {
                 result = JSONArray.parseArray(JSONObject.toJSONString(tOrders));
             }
 
-
             return success(result);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getCause().getMessage());
             return fail(com.fmc.applet.constants.ResponseState.INTELLIGENT_DOOR_ERRPR);
         }
-
-
     }
 }

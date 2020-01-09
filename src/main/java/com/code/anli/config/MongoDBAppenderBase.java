@@ -1,13 +1,9 @@
 package com.code.anli.config;
 
 /**
- * @ClassName MongoDBAppenderBase
- * @Description TODO
- * @Author Administrator
- * @Date 2019/12/27 15:37
- * @Version 1.0
- **/
-
+ * @ClassName MongoDBAppenderBase @Description
+ * 15:37 @Version 1.0
+ */
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -25,20 +21,18 @@ import java.util.Collections;
  */
 public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
 
+    protected String source;
     private MongoClient mongo;
     private MongoCollection<Document> eventsCollection;
-
     private String host = "106.54.34.142"; // 地址
-    private int port = 27017;           // 端口号
-    private String dbName = "practice";       // 库名
-    private String collectionName="logdb";      // 集合名
-    private String username;            // 用户名
-    private String password;            // 密码
-    protected String source;
-
+    private int port = 27017; // 端口号
+    private String dbName = "practice"; // 库名
+    private String collectionName = "logdb"; // 集合名
+    private String username; // 用户名
+    private String password; // 密码
     private int connectionsPerHost = 10; // 空闲线程池中最大链接数
-    private int threadsAllowedToBlockForConnectionMultiplier = 5; //一个线程等待链接可用的最大等待毫秒数
-    private int maxWaitTime = 1000 * 60 * 2;  // 最长等待时间
+    private int threadsAllowedToBlockForConnectionMultiplier = 5; // 一个线程等待链接可用的最大等待毫秒数
+    private int maxWaitTime = 1000 * 60 * 2; // 最长等待时间
     private int connectTimeout;
     private int socketTimeout;
     private int wtimeout;
@@ -52,28 +46,32 @@ public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<
         try {
             connectToMongoDB();
             super.start();
-        } catch (UnknownHostException e) { addError("Error connecting to MongoDB server: " + host + ":" + port, e);
+        } catch (UnknownHostException e) {
+            addError("Error connecting to MongoDB server: " + host + ":" + port, e);
         }
     }
 
     private void connectToMongoDB() throws UnknownHostException {
         // 用户名 数据库 密码
         if (username != null && password != null) {
-            MongoCredential credential = MongoCredential.createCredential(username, dbName, password.toCharArray());
-            mongo = new MongoClient(new ServerAddress(host, port), Collections.singletonList(credential), buildOptions());
+            MongoCredential credential =
+                    MongoCredential.createCredential(username, dbName, password.toCharArray());
+            mongo =
+                    new MongoClient(
+                            new ServerAddress(host, port), Collections.singletonList(credential), buildOptions());
         } else {
             mongo = new MongoClient(new ServerAddress(host, port), buildOptions());
         }
 
         MongoDatabase db = mongo.getDatabase(dbName);
         eventsCollection = db.getCollection(collectionName);
-
     }
 
     private MongoClientOptions buildOptions() {
         final MongoClientOptions.Builder options = new MongoClientOptions.Builder();
         options.connectionsPerHost(connectionsPerHost);
-        options.threadsAllowedToBlockForConnectionMultiplier(threadsAllowedToBlockForConnectionMultiplier);
+        options.threadsAllowedToBlockForConnectionMultiplier(
+                threadsAllowedToBlockForConnectionMultiplier);
         options.maxWaitTime(maxWaitTime);
         options.connectTimeout(connectTimeout);
         options.socketTimeout(socketTimeout);
@@ -96,8 +94,7 @@ public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<
         super.stop();
     }
 
-    //... 以下是变量get set 方法 此处省略
-
+    // ... 以下是变量get set 方法 此处省略
 
     public MongoClient getMongo() {
         return mongo;
@@ -183,8 +180,10 @@ public abstract class MongoDBAppenderBase<E> extends UnsynchronizedAppenderBase<
         return threadsAllowedToBlockForConnectionMultiplier;
     }
 
-    public void setThreadsAllowedToBlockForConnectionMultiplier(int threadsAllowedToBlockForConnectionMultiplier) {
-        this.threadsAllowedToBlockForConnectionMultiplier = threadsAllowedToBlockForConnectionMultiplier;
+    public void setThreadsAllowedToBlockForConnectionMultiplier(
+            int threadsAllowedToBlockForConnectionMultiplier) {
+        this.threadsAllowedToBlockForConnectionMultiplier =
+                threadsAllowedToBlockForConnectionMultiplier;
     }
 
     public int getMaxWaitTime() {

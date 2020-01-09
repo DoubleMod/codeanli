@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 @Component
 public class TopicReceiver {
     private Logger logger = Logger.getLogger(TopicReceiver.class.getName());
+
     // queues是指要监听的队列的名字
     @RabbitListener(queues = RabbitMQTopicConfig.TOPIC_QUEUE)
     public void receiveTopic(JSONObject obj) {

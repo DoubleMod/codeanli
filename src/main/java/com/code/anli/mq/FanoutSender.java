@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 @Component
 public class FanoutSender {
-    private Logger logger = Logger.getLogger(FanoutSender.class.getName());
+  private Logger logger = Logger.getLogger(FanoutSender.class.getName());
 
     @Autowired
     private AmqpTemplate amqpTemplate;

@@ -9,26 +9,24 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.lang.management.ManagementFactory;
-
 
 @SpringBootApplication
 @SpringBootConfiguration
 @EnableScheduling
 @MapperScan(value = "com.code.anli.mapper.*.xml")
-public class CodeanliApplication extends SpringBootServletInitializer implements CommandLineRunner{
+public class CodeanliApplication extends SpringBootServletInitializer implements CommandLineRunner {
     private Logger logger = Logger.getLogger(CodeanliApplication.class.getName());
 
     @Value("${spring.datasource.url}")
     private String sqlAdress;
+
     @Value("${spring.datasource.username}")
     private String sqlName;
+
     @Value("${server.port}")
     private String port;
-
-
 
     public static void main(String[] args) {
         SpringApplication.run(CodeanliApplication.class, args);
@@ -39,8 +37,12 @@ public class CodeanliApplication extends SpringBootServletInitializer implements
 
         try {
 
-            logger.info(("JVM中试图使用的最大的内存是（最大分配）：" + Runtime.getRuntime().maxMemory() / (double) 1024 / 1024 + "MB"));
-            logger.info("JVM的总内存(初始分配)：" + Runtime.getRuntime().totalMemory() / (double) 1024 / 1024 + "MB");
+            logger.info(
+                    ("JVM中试图使用的最大的内存是（最大分配）："
+                            + Runtime.getRuntime().maxMemory() / (double) 1024 / 1024
+                            + "MB"));
+            logger.info(
+                    "JVM的总内存(初始分配)：" + Runtime.getRuntime().totalMemory() / (double) 1024 / 1024 + "MB");
             logger.info("JVM的剩余(可分配)：" + Runtime.getRuntime().freeMemory() / (double) 1024 / 1024 + "MB");
             logger.info("The  Pid is " + ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
             logger.info("SQL User is: " + sqlName);
